@@ -30,6 +30,16 @@ class requiredToolsModel {
       throw error; // Rethrow error after logging
     }
   }
+  // Function to get all machines
+  static async getAllTools() {
+    try {
+      const result = await pool.query("SELECT * FROM required_tools");
+      return result.rows; // Return all machines
+    } catch (error) {
+      console.error(error.message);
+      throw error; // rethrow error after logging
+    }
+  }
 }
 
 module.exports = requiredToolsModel;
