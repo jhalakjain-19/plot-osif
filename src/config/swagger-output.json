@@ -1,0 +1,14 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Plot Osif API",
+    "version": "1.0.0",
+    "description": "This is API documentation"
+  },
+  "host": "http://localhost:5500",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "paths": {}
+}
