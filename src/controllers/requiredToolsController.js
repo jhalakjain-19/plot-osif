@@ -77,6 +77,28 @@ class requiredToolsController {
       next(error);
     }
   }
+  static async updateTool(req, res, next) {
+    try {
+      const updatedTool = await requiredToolsService.updateTool(
+        req.params.tool_id,
+        req
+      );
+      if (!updatedTool)
+        return requiredToolsController.handleResponse(
+          res,
+          404,
+          "tool not found"
+        );
+      requiredToolsController.handleResponse(
+        res,
+        200,
+        "tool updated successfully",
+        updatedTool
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = requiredToolsController;

@@ -14,6 +14,9 @@ class requiredToolsService {
   static async deleteTool(ToolId, data) {
     return await requiredToolsModel.deleteTool(ToolId, data);
   }
+  static async updateTool(toolId, data) {
+    return await requiredToolsModel.updateTool(toolId, data);
+  }
 }
 
 module.exports = requiredToolsService;

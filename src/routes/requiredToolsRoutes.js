@@ -1,6 +1,9 @@
 const express = require("express");
 const requiredToolsController = require("../controllers/requiredToolsController");
-const { validateToolCreate } = require("../middlewares/requiredToolsValidator");
+const {
+  validateToolCreate,
+  validateToolUpdate,
+} = require("../middlewares/requiredToolsValidator");
 
 const authenticateToken = require("../middlewares/authToken");
 
@@ -17,6 +20,6 @@ console.log("Required tools routes");
 router.get("/", requiredToolsController.getAllTools);
 router.get("/:tool_id", requiredToolsController.getToolById);
 router.post("/", validateToolCreate, requiredToolsController.createTool);
-//router.put("/:tool_id", validateAtUpdate, requiredToolsController.updateTool);
+router.put("/:tool_id", validateToolUpdate, requiredToolsController.updateTool);
 router.delete("/:tool_id", requiredToolsController.deleteTool);
 module.exports = router;
