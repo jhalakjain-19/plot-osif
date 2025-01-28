@@ -7,6 +7,9 @@ class requiredToolsService {
   static async getAllTools() {
     return await requiredToolsModel.getAllTools();
   }
+  static async getToolById(toolId) {
+    return await requiredToolsModel.getToolById(toolId);
+  }
 }
 
 module.exports = requiredToolsService;

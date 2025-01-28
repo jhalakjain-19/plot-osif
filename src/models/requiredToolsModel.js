@@ -30,13 +30,25 @@ class requiredToolsModel {
       throw error; // Rethrow error after logging
     }
   }
-  // Function to get all machines
+  // Function to get all tools
   static async getAllTools() {
     try {
       const result = await pool.query("SELECT * FROM required_tools");
-      return result.rows; // Return all machines
+      return result.rows; // Return all tools
     } catch (error) {
       console.error(error.message);
+      throw error; // rethrow error after logging
+    }
+  }
+  static async getToolById(tool_id) {
+    try {
+      const result = await pool.query(
+        "SELECT * FROM required_tools WHERE tool_id = $1 ",
+        [tool_id]
+      );
+      return result.rows[0]; // Return the tools with the given ID
+    } catch (error) {
+      console.error(tool_id);
       throw error; // rethrow error after logging
     }
   }

@@ -15,6 +15,8 @@ router.get("/test", (req, res) => {
 // Using class-based controller methods
 console.log("Required tools routes");
 router.get("/", requiredToolsController.getAllTools);
+router.get("/:tool_id", requiredToolsController.getToolById);
+
 router.post("/", validateToolCreate, requiredToolsController.createTool);
 
 module.exports = router;
