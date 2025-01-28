@@ -1,12 +1,12 @@
 const { pool, pool2 } = require("../config/db");
 
 class requiredToolsModel {
-  static async createTool(data, req) {
+  static async createTool(toolData) {
     try {
-      console.log(data.tool_name);
+      console.log(toolData.tool_name);
       const result = await pool.query(
         "INSERT INTO required_tools (tool_name) VALUES($1) RETURNING *",
-        [data.tool_name]
+        [toolData.tool_name]
       );
       const createdTool = result.rows[0];
 
@@ -17,10 +17,10 @@ class requiredToolsModel {
           8, // module_id for tools module
           1, // action_type (create)
           createdTool.tool_id, // record_id
-          req.user.user_id, // user_id (ID of the user performing the action)
+          1, // user_id (ID of the user performing the action)
           null, // previous_data (no previous data for an INSERT operation)
           JSON.stringify(createdTool), // current_data
-          req.headers["x-forwarded-for"] || req.socket.remoteAddress, // IP Address
+          toolData.ip_address, // IP Address
         ]
       );
 
