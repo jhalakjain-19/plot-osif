@@ -55,6 +55,28 @@ class requiredToolsController {
       next(error);
     }
   }
+  static async deleteTool(req, res, next) {
+    try {
+      const deletedTool = await requiredToolsService.deleteTool(
+        req.params.tool_id,
+        req
+      );
+      if (!deletedTool)
+        return requiredToolsController.handleResponse(
+          res,
+          404,
+          "Tool not found"
+        );
+      requiredToolsController.handleResponse(
+        res,
+        200,
+        "Tool deleted successfully",
+        deletedTool
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = requiredToolsController;

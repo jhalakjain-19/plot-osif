@@ -1,7 +1,7 @@
 const { pool, pool2 } = require("../config/db");
 
 class requiredToolsModel {
-  static async createTool(data) {
+  static async createTool(data, req) {
     try {
       console.log(data.tool_name);
       const result = await pool.query(
@@ -17,10 +17,10 @@ class requiredToolsModel {
           8, // module_id for tools module
           1, // action_type (create)
           createdTool.tool_id, // record_id
-          1, // user_id (ID of the user performing the action)
+          req.user.user_id, // user_id (ID of the user performing the action)
           null, // previous_data (no previous data for an INSERT operation)
           JSON.stringify(createdTool), // current_data
-          data.ip_address, // IP Address
+          req.headers["x-forwarded-for"] || req.socket.remoteAddress, // IP Address
         ]
       );
 
@@ -49,6 +49,38 @@ class requiredToolsModel {
       return result.rows[0]; // Return the tools with the given ID
     } catch (error) {
       console.error(tool_id);
+      throw error; // rethrow error after logging
+    }
+  }
+  static async deleteTool(tool_id, req) {
+    try {
+      const result = await pool.query(
+        "UPDATE required_tools SET is_deleted = 1 WHERE tool_id = $1 RETURNING *",
+        [tool_id]
+      );
+      const deletedTool = result.rows[0];
+
+      if (!deletedTool) {
+        throw new Error("Tool not found or already deleted");
+      }
+
+      // Log the operation into the log database (pool2)
+      await pool2.query(
+        "INSERT INTO logs (module_id, action_type, record_id, user_id, previous_data, current_data, ip_address) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        [
+          8, // module_id for tools module
+          2, // action_type (delete)
+          deletedTool.tool_id, // record_id
+          1, // user_id (ID of the user performing the action)
+          JSON.stringify(deletedTool), // previous_data
+          null, // current_data (null since it's deleted)
+          req.headers["x-forwarded-for"] || req.socket.remoteAddress, // IP Address
+        ]
+      );
+
+      return deletedTool; // Return the soft-deleted tool
+    } catch (error) {
+      console.error(error.message);
       throw error; // rethrow error after logging
     }
   }

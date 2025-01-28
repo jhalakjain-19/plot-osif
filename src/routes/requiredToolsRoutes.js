@@ -16,7 +16,7 @@ router.get("/test", (req, res) => {
 console.log("Required tools routes");
 router.get("/", requiredToolsController.getAllTools);
 router.get("/:tool_id", requiredToolsController.getToolById);
-
 router.post("/", validateToolCreate, requiredToolsController.createTool);
-
+//router.put("/:tool_id", validateAtUpdate, requiredToolsController.updateTool);
+router.delete("/:tool_id", requiredToolsController.deleteTool);
 module.exports = router;

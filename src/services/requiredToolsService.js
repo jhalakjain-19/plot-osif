@@ -1,3 +1,4 @@
+const { deleteTool } = require("../controllers/requiredToolsController");
 const requiredToolsModel = require("../models/requiredToolsModel");
 
 class requiredToolsService {
@@ -9,6 +10,9 @@ class requiredToolsService {
   }
   static async getToolById(toolId) {
     return await requiredToolsModel.getToolById(toolId);
+  }
+  static async deleteTool(ToolId, data) {
+    return await requiredToolsModel.deleteTool(ToolId, data);
   }
 }
 
