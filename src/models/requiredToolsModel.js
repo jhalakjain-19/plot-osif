@@ -1,26 +1,27 @@
 const { pool, pool2 } = require("../config/db");
 
 class requiredToolsModel {
-  static async createTool(toolData) {
+  static async createTool(req) {
     try {
-      console.log(toolData.tool_name);
+      //console.log(toolData.tool_name);
       const result = await pool.query(
         "INSERT INTO required_tools (tool_name) VALUES($1) RETURNING *",
-        [toolData.tool_name]
+        [req.body.tool_name]
       );
       const createdTool = result.rows[0];
 
       // Log the operation into the log database (pool2)
       await pool2.query(
-        "INSERT INTO logs (module_id, action_type, record_id, user_id, previous_data, current_data, ip_address) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        "INSERT INTO logs (module_id, action_type, record_id, user_id, previous_data, current_data, ip_address) VALUES ($1, $2, $3, $4, $5, $6, $7) ",
         [
           8, // module_id for tools module
           1, // action_type (create)
           createdTool.tool_id, // record_id
-          1, // user_id (ID of the user performing the action)
+          req.user.user_id, // user_id (ID of the user performing the action)
           null, // previous_data (no previous data for an INSERT operation)
           JSON.stringify(createdTool), // current_data
-          toolData.ip_address, // IP Address
+          // toolData.ip_address, // IP Address
+          req.headers["x-forwarded-for"] || req.socket.remoteAddress, // IP Address
         ]
       );
 
@@ -55,14 +56,10 @@ class requiredToolsModel {
   static async deleteTool(tool_id, req) {
     try {
       const result = await pool.query(
-        "UPDATE required_tools SET is_deleted = 1 WHERE tool_id = $1 RETURNING *",
+        "DELETE FROM required_tools WHERE tool_id = $1 RETURNING *",
         [tool_id]
       );
       const deletedTool = result.rows[0];
-
-      if (!deletedTool) {
-        throw new Error("Tool not found or already deleted");
-      }
 
       // Log the operation into the log database (pool2)
       await pool2.query(
@@ -71,7 +68,7 @@ class requiredToolsModel {
           8, // module_id for tools module
           2, // action_type (delete)
           deletedTool.tool_id, // record_id
-          1, // user_id (ID of the user performing the action)
+          req.user.user_id, // user_id (ID of the user performing the action)
           JSON.stringify(deletedTool), // previous_data
           null, // current_data (null since it's deleted)
           req.headers["x-forwarded-for"] || req.socket.remoteAddress, // IP Address
@@ -112,7 +109,7 @@ class requiredToolsModel {
           8, // module_id for tools module
           2, // action_type (update)
           updatedTool.tool_id, // record_id
-          1, // user_id (who performed the action)
+          req.user.user_id, // user_id (who performed the action)
           JSON.stringify(previousData), // previous data before update
           JSON.stringify(updatedTool), // current data after update
           req.headers["x-forwarded-for"] || req.socket.remoteAddress, // IP Address

@@ -12,7 +12,7 @@ class requiredToolsController {
   static async createTool(req, res, next) {
     try {
       console.log(req.body);
-      const newTool = await requiredToolsService.createTool(req.body);
+      const newTool = await requiredToolsService.createTool(req);
       requiredToolsController.handleResponse(
         res,
         201,

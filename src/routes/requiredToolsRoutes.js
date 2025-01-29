@@ -11,10 +11,10 @@ const router = express.Router();
 
 // Apply authenticateToken middleware to all routes below this line
 
-//router.use(authenticateToken);
-router.get("/test", (req, res) => {
-  res.send("Testing required tools routes");
-});
+router.use(authenticateToken);
+// router.get("/test", (req, res) => {
+//   res.send("Testing required tools routes");
+// });
 // Using class-based controller methods
 console.log("Required tools routes");
 router.get("/", requiredToolsController.getAllTools);
